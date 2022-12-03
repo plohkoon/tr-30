@@ -112,7 +112,7 @@ class AICommands(Cog):
 
         print(f"Generating an image according to the prompt: {prompt}")
         response = Image.create(
-            prompt=prompt, size="512x512", n=1, response_format="url", user=interaction.user.id)
+            prompt=prompt, size=IMAGE_SIZES[size], n=1, response_format="url", user=f"{interaction.user.id}")
 
         # TODO any sort of error handling
         await interaction.followup.send(response["data"][0]["url"])
