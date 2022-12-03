@@ -10,6 +10,8 @@ import re
 from lib.client import TR30Client
 from lib.admin_commands import AdminCommands
 
+import asyncio
+
 load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -103,11 +105,6 @@ Don't know what any of this means? Check out the https: // beta.openai.com/docs/
 
 
 if __name__ == "__main__":
-    # discord_client.run(discord_key)
-    # tr30_client = TR30Client()
     tr30_bot = TR30Bot()
-
-    tree = CommandTree(tr30_bot)
-    AdminCommands(tree)
 
     tr30_bot.run()
