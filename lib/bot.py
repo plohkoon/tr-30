@@ -1,19 +1,23 @@
-from discord import Client, Message, Intents
-from discord.app_commands import CommandTree
-from .constants import MACIUS_USER_ID, CPT_FROGS_USER_ID, DISCORD_KEY, TR_GUILD_ID
+from discord import Message, Intents
+from discord.ext.commands import Bot
+from .constants import MACIUS_USER_ID, CPT_FROGS_USER_ID, DISCORD_KEY
 from re import compile, IGNORECASE
 from random import random
+
+from .admin_commands import AdminCommands
+from .ai_commands import AICommands
+from .test_commands import TestCommands
 
 spoiler_regex = compile(r'\|\|(.+?)\|\|')
 based_regex = compile(r'based', IGNORECASE)
 
 
-class TR30Client(Client):
+class TR30Bot(Bot):
     _instance = None
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
-            cls._instance = super(TR30Client, cls).__new__(
+            cls._instance = super(TR30Bot, cls).__new__(
                 cls, *args, **kwargs)
 
         return cls._instance
@@ -22,15 +26,14 @@ class TR30Client(Client):
         if 'intents' in kwargs:
             del kwargs['intents']
 
-        super().__init__(*args, intents=Intents.all(), **kwargs)
-
-        self.tree: CommandTree = None
+        super().__init__("$", *args, intents=Intents.all(), **kwargs)
 
     async def on_ready(self) -> None:
         print(f'{self.user} has connected to Discord!')
 
-        if self.tree is CommandTree:
-            await self.tree.sync(guild=TR_GUILD_ID)
+        await self.add_cog(AdminCommands(self))
+        await self.add_cog(AICommands(self))
+        await self.add_cog(TestCommands(self))
 
     async def on_message(self, message: Message) -> None:
         if message.author == self.user:

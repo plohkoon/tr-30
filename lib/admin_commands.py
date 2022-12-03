@@ -1,7 +1,7 @@
-from discord.app_commands import Group, CommandTree, guild_only, guilds, command
+from discord.app_commands import command
 from discord import Interaction
 from discord.ext.commands import Cog, Bot
-from .constants import TR_GUILD_ID, IABW_GUILD_ID, PLOHKOON_USER_ID
+from .constants import PLOHKOON_USER_ID
 
 
 class AdminCommands(Cog):
