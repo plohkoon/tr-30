@@ -1,9 +1,11 @@
-FROM python:3.10-alpine
+FROM python:3.10
 
 RUN mkdir /app
 WORKDIR /app
 
-RUN apk --no-cache add musl-dev linux-headers g++
+# RUN apk --no-cache add musl-dev linux-headers g++
+
+# RUN pip install --upgrade pip setuptools wheel
 
 COPY requirements.txt .
 
