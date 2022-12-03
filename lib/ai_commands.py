@@ -2,8 +2,7 @@ from discord.app_commands import command, guilds
 from discord import Interaction
 from discord.ext.commands import Cog, Bot
 from .constants import TR_GUILD, IABW_GUILD
-from openai import Completion, Model
-from re import sub
+from openai import Completion, Image
 
 
 # TODO: Update this to chat bot when I can get it working
@@ -64,9 +63,15 @@ MODEL_LIST = [
 
 MAX_TOKENS = {
     "text-davinci-003": 4000,
-    "text-curie-001": 2048,
-    "text-babbage-001": 2048,
-    "text-ada-001": 2048,
+    "text-curie-001": 2000,
+    "text-babbage-001": 2000,
+    "text-ada-001": 2000,
+}
+
+IMAGE_SIZES = {
+    "small": "256x256",
+    "medium": "512x512",
+    "large": "1024x1024",
 }
 
 
@@ -83,8 +88,10 @@ class AICommands(Cog):
 
         await interaction.response.defer()
 
+        print(f"Generating a completion for the prompt: {prompt}")
+
         response = Completion.create(
-            model=model, prompt=prompt, max_tokens=4000)
+            model=model, prompt=prompt, max_tokens=MAX_TOKENS[model])
 
         # TODO: Any sort of error handling
         await interaction.followup.send(response["choices"][0]["text"])
@@ -93,3 +100,19 @@ class AICommands(Cog):
     @guilds(TR_GUILD, IABW_GUILD)
     async def list_models(self, interaction: Interaction) -> None:
         await interaction.response.send_message(MODEL_LIST_TEXT, ephemeral=True)
+
+    @command(name="visualize", description="Make an image")
+    @guilds(TR_GUILD, IABW_GUILD)
+    async def visualize(self, interaction: Interaction, prompt: str, size: str = "medium") -> None:
+        if size not in IMAGE_SIZES:
+            await interaction.response.send_message("Invalid image size. Use one of: small, medium, large", ephemeral=True)
+            return
+
+        await interaction.response.defer()
+
+        print(f"Generating an image according to the prompt: {prompt}")
+        response = Image.create(
+            prompt=prompt, size="512x512", n=1, response_format="url", user=interaction.user.id)
+
+        # TODO any sort of error handling
+        await interaction.followup.send(response["data"][0]["url"])

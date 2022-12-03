@@ -1,7 +1,8 @@
-from discord.app_commands import command
+from discord.app_commands import command, guilds
 from discord import Interaction
 from discord.ext.commands import Cog, Bot
 from .constants import PLOHKOON_USER_ID
+from .constants import TR_GUILD, IABW_GUILD
 
 
 class AdminCommands(Cog):
@@ -9,6 +10,7 @@ class AdminCommands(Cog):
         self.bot = bot
 
     @command(name="sync", description="Syncs the bot with the server")
+    @guilds(TR_GUILD, IABW_GUILD)
     async def sync(self, interaction: Interaction) -> None:
         if interaction.user.id == PLOHKOON_USER_ID:
             await self.bot.tree.sync(guild=interaction.guild)
