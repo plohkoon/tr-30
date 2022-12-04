@@ -3,6 +3,7 @@ from discord import Interaction
 from discord.ext.commands import Cog, Bot
 from .constants import TR_GUILD, IABW_GUILD
 from openai import Completion, Image
+import sys
 
 
 # TODO: Update this to chat bot when I can get it working
@@ -88,7 +89,8 @@ class AICommands(Cog):
 
         await interaction.response.defer()
 
-        print(f"Generating a completion for the prompt: {prompt}")
+        print(
+            f"Generating a completion for the prompt: {prompt}", file=sys.stderr)
 
         response = Completion.create(
             model=model, prompt=prompt, max_tokens=MAX_TOKENS[model])
@@ -110,7 +112,8 @@ class AICommands(Cog):
 
         await interaction.response.defer()
 
-        print(f"Generating an image according to the prompt: {prompt}")
+        print(
+            f"Generating an image according to the prompt: {prompt}", file=sys.stderr)
         response = Image.create(
             prompt=prompt, size=IMAGE_SIZES[size], n=1, response_format="url", user=f"{interaction.user.id}")
 

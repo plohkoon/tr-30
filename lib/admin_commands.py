@@ -3,6 +3,7 @@ from discord import Interaction
 from discord.ext.commands import Cog, Bot
 from .constants import PLOHKOON_USER_ID
 from .constants import TR_GUILD, IABW_GUILD
+import sys
 
 
 class AdminCommands(Cog):
@@ -14,7 +15,8 @@ class AdminCommands(Cog):
     async def sync(self, interaction: Interaction) -> None:
         if interaction.user.id == PLOHKOON_USER_ID:
             await self.bot.tree.sync(guild=interaction.guild)
-            print(f"Command tree synced to {interaction.guild.name}")
+            print(
+                f"Command tree synced to {interaction.guild.name}", file=sys.stderr)
             await interaction.response.send_message("Command tree synced", ephemeral=True)
         else:
             await interaction.response.send_message("Piss off, you're not my dad", ephemeral=True)

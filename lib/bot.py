@@ -3,6 +3,7 @@ from discord.ext.commands import Bot
 from .constants import MACIUS_USER_ID, CPT_FROGS_USER_ID, DISCORD_KEY, TR_GUILD
 from re import compile, IGNORECASE
 from random import random
+import sys
 
 from .admin_commands import AdminCommands
 from .ai_commands import AICommands
@@ -30,7 +31,7 @@ class TR30Bot(Bot):
         super().__init__("$", *args, intents=Intents.all(), **kwargs)
 
     async def on_ready(self) -> None:
-        print(f'{self.user} has connected to Discord!')
+        print(f'{self.user} has connected to Discord!', file=sys.stderr)
 
         await self.add_cog(AdminCommands(self))
         await self.add_cog(AICommands(self))
@@ -43,15 +44,13 @@ class TR30Bot(Bot):
         if message.author == self.user:
             return
 
-        print(message.content)
-
         if spoiler_regex.match(message.content):
-            print("Found a spoiler!!!")
+            print("Found a spoiler!!!", file=sys.stderr)
             if random() < 0.5:
                 await message.channel.send(f"Hey <@{MACIUS_USER_ID}>, {message.author.nick} said something you might want to see!")
 
         if message.author.id == CPT_FROGS_USER_ID and based_regex.match(message.content):
-            print("Found a BASED")
+            print("Found a BASED", file=sys.stderr)
             await message.channel.send(f"Hey <@{CPT_FROGS_USER_ID}>, https://youtu.be/RUExiGNHF5s")
 
     def run(self) -> None:
