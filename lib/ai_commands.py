@@ -2,7 +2,7 @@ from discord.app_commands import command, guilds
 from discord import Interaction
 from discord.ext.commands import Cog, Bot
 from .constants import TR_GUILD, IABW_GUILD
-from openai import Completion, Image
+from openai import Completion, Image, InvalidRequestError
 import sys
 
 
@@ -92,11 +92,17 @@ class AICommands(Cog):
         print(
             f"Generating a completion for the prompt: {prompt}", file=sys.stderr)
 
-        response = Completion.create(
-            model=model, prompt=prompt, max_tokens=MAX_TOKENS[model])
+        try:
+            response = Completion.create(
+                model=model, prompt=prompt, max_tokens=MAX_TOKENS[model])
 
-        # TODO: Any sort of error handling
-        await interaction.followup.send(response["choices"][0]["text"])
+            message = response["choices"][0]["text"]
+        except InvalidRequestError as e:
+            message = f"Error: {e._message}"
+        except:
+            message = "An unknown error occurred. Please try again later."
+        finally:
+            await interaction.followup.send(message)
 
     @command(name="list_models", description="List the available models")
     @guilds(TR_GUILD, IABW_GUILD)
@@ -114,8 +120,14 @@ class AICommands(Cog):
 
         print(
             f"Generating an image according to the prompt: {prompt}", file=sys.stderr)
-        response = Image.create(
-            prompt=prompt, size=IMAGE_SIZES[size], n=1, response_format="url", user=f"{interaction.user.id}")
 
-        # TODO any sort of error handling
-        await interaction.followup.send(response["data"][0]["url"])
+        try:
+            response = Image.create(
+                prompt=prompt, size=IMAGE_SIZES[size], n=1, response_format="url", user=f"{interaction.user.id}")
+            message = response["data"][0]["url"]
+        except InvalidRequestError as e:
+            message = f"Error: {e._message}"
+        except:
+            message = "An unknown error occurred. Please try again later."
+        finally:
+            await interaction.followup.send(message)
