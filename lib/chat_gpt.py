@@ -2,7 +2,7 @@ import requests
 from .constants import OPENAI_PASSWORD, OPENAI_USERNAME, OPENAI_ACCESS_TOKEN
 from uuid import uuid4 as uuid
 import json
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse, parse_qsl
 
 
 ####
@@ -23,25 +23,80 @@ class ChatGpt:
         self._model_name = "text-davinci-002-render"
 
         self._access_token = OPENAI_ACCESS_TOKEN
-    #     providers_res = requests.get(
-    #         "https://chat.openai.com/api/auth/providers")
-    #     csrf_res = requests.get(
-    #         "https://chat.openai.com/api/auth/csrf")
 
-    #     csrf_token = csrf_res.json()["csrfToken"]
+        # csrf_res = requests.get("https://chat.openai.com/api/auth/csrf")
+        # cookies = csrf_res.cookies
 
-    #     chat_auth0_res = requests.post(
-    #         "https://chat.openai.com/api/auth/signin/auth0?prompt=login",
-    #         data={
-    #             "callbackUrl": "/",
-    #             "csrfToken": csrf_token,
-    #             "json": True
-    #         },
-    #         headers={
-    #             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:107.0) Gecko/20100101 Firefox/107.0"
-    #         }
-    #     )
-    #     print(chat_auth0_res.headers)
+        # csrf_token = csrf_res.json()["csrfToken"]
+
+        # chat_auth0_res = requests.post(
+        #     "https://chat.openai.com/api/auth/signin/auth0?prompt=login",
+        #     data={
+        #         "callbackUrl": "/",
+        #         "csrfToken": csrf_token,
+        #         "json": True
+        #     },
+        #     cookies=cookies,
+        #     allow_redirects=False
+        # )
+        # cookies.update(chat_auth0_res.cookies)
+
+        # location = chat_auth0_res.headers["location"]
+        # redirect_res = requests.get(
+        #     location, cookies=cookies, allow_redirects=False)
+        # cookies.update(redirect_res.cookies)
+
+        # # location = f"https://auth0.openai.com{redirect_res.headers['location']}"
+        # # redirect_res = requests.get(
+        # #     location, cookies=cookies, allow_redirects=False)
+        # # cookies.update(redirect_res.cookies)
+
+        # location = f"https://auth0.openai.com{redirect_res.headers['location']}".replace(
+        #     "identifier", "password")
+
+        # full_url = urlparse(location)
+        # query_string = parse_qsl(full_url.query)
+
+        # state = [val for (key, val) in query_string if key == "state"][0]
+
+        # auth_res = requests.post(
+        #     location,
+        #     data={
+        #         "username": OPENAI_USERNAME,
+        #         "password": OPENAI_PASSWORD,
+        #         "state": state,
+        #         "action": "default"
+        #     },
+        #     cookies=cookies,
+        #     allow_redirects=False
+        # )
+        # cookies.update(auth_res.cookies)
+
+        # print(auth_res.headers["location"], auth_res.status_code)
+
+        # url = None
+        # try:
+        #     url = chat_auth0_res.json()["url"]
+        # except:
+        #     url = chat_auth0_res.url.replace("identifier", "password")
+
+        # full_url = urlparse(url)
+        # query_string = parse_qsl(full_url.query)
+
+        # state = [val for (key, val) in query_string if key == "state"][0]
+
+        # auth_res = requests.post(
+        #     url,
+        #     data={
+        #         "username": OPENAI_USERNAME,
+        #         "password": OPENAI_PASSWORD,
+        #         "state": state,
+        #         "action": "default"
+        #     },
+        #     cookies=cookies
+        # )
+
+        # print(auth_res.status_code, auth_res.text)
 
     #     auth0_params = urlencode({
     #         "client_id": "foo",

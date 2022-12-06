@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import openai
 from pnglatex import pnglatex
-from lib.chatgpt import ChatGpt
+from lib.chat_gpt import ChatGpt
 
 load_dotenv()
 
@@ -17,4 +17,3 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 # textstr = '\\documentclass[preview]{standalone}\\begin{document}Hello. This is a test.\\begin{equation}L = 2\\end{equation}\\end{document}'
 
 chat_gpt = ChatGpt()
-print(chat_gpt.chat("Give me a code sample"))
