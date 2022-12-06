@@ -38,7 +38,7 @@ class TR30Bot(Bot):
         await self.add_cog(TestCommands(self))
         await self.add_cog(MathCommands(self))
 
-        await self.tree.sync(guild=TR_GUILD)
+        # await self.tree.sync(guild=TR_GUILD)
 
     async def on_message(self, message: Message) -> None:
         if message.author == self.user:

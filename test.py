@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 import openai
 from pnglatex import pnglatex
+from lib.chatgpt import ChatGpt
 
 load_dotenv()
 
@@ -13,4 +14,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 # print(openai.Image.create(prompt="The man named Tall Randy",
 #       n=1, size="512x512", response_format="url"))
 
-textstr = '\\documentclass[preview]{standalone}\\begin{document}Hello. This is a test.\\begin{equation}L = 2\\end{equation}\\end{document}'
+# textstr = '\\documentclass[preview]{standalone}\\begin{document}Hello. This is a test.\\begin{equation}L = 2\\end{equation}\\end{document}'
+
+chat_gpt = ChatGpt()
+print(chat_gpt.chat("Give me a code sample"))

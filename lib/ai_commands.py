@@ -1,9 +1,11 @@
 from discord.app_commands import command, guilds
-from discord import Interaction, Embed, Colour
+from discord import Interaction, Embed, Colour, ChannelType, Message, Thread
 from discord.ext.commands import Cog, Bot
 from .constants import TR_GUILD, IABW_GUILD, IABW_LOGO
 from openai import Completion, Image, InvalidRequestError
 import sys
+from faker import Faker
+from .chat_gpt import ChatGpt
 
 
 # TODO: Update this to chat bot when I can get it working
@@ -33,6 +35,8 @@ IMAGE_SIZES = {
 class AICommands(Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
+
+        self.threads = {}
 
     @command(name="prompt", description="Prompt with the AI")
     @guilds(TR_GUILD, IABW_GUILD)
@@ -228,3 +232,67 @@ Good at: Parsing text, simple classification, address correction, keywords
             embed.add_field(name="message", value=str(e))
         finally:
             await interaction.followup.send(embed=embed)
+
+    @command(name="chat", description="Start a chat thread")
+    @guilds(TR_GUILD, IABW_GUILD)
+    async def chat(self, interaction: Interaction, thread_name: str = None) -> None:
+        if interaction.channel.type != ChannelType.text:
+            await interaction.response.send_message(
+                "This command can only be used in text channels",
+                ephemeral=True
+            )
+            return
+
+        if thread_name is None:
+            fake = Faker()
+            thread_name = fake.name()
+            while thread_name in self.threads:
+                thread_name = fake.name()
+
+        await interaction.response.defer()
+
+        chatter = ChatGpt()
+
+        # TODO make sure that chatter initializes correctly
+
+        thread = await interaction.channel.create_thread(
+            name=thread_name,
+            type=ChannelType.public_thread,
+        )
+
+        self.threads[thread.id] = chatter
+
+        await thread.join()
+        await thread.add_user(interaction.user)
+
+        await thread.send("Hello! I'm a chatbot. Ask me anything!")
+
+        await interaction.followup.send(
+            "Chat thread created",
+            ephemeral=True
+        )
+
+    @Cog.listener()
+    async def on_message(self, message: Message) -> None:
+        if message.author.bot:
+            return
+
+        thread = message.channel
+        id = thread.id
+
+        if thread.type != ChannelType.public_thread or thread.owner.id != self.bot.user.id or id not in self.threads.keys():
+            return
+
+        chatter = self.threads[id]
+
+        try:
+            async with message.channel.typing():
+                response = None
+                for segment in chatter.chat(message.content):
+                    if response is None:
+                        response = await message.channel.send(segment)
+                    else:
+                        response = await response.edit(content=segment)
+        except Exception as e:
+            print(e)
+            await message.channel.send("Something went wrong. Please try again later.")
