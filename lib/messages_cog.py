@@ -5,8 +5,8 @@ from re import compile, IGNORECASE
 import sys
 from datetime import datetime
 
-spoiler_regex = compile(r'\|\|(.+?)\|\|')
-based_regex = compile(r'based', IGNORECASE)
+SPOILER_REGEX = compile(r'\|\|(.+?)\|\|')
+BASED_REGEX = compile(r'based', IGNORECASE)
 
 async def setup(bot: Bot):
     await bot.add_cog(MessageCog(bot))
@@ -21,7 +21,7 @@ class MessageCog(Cog):
         if message.author == self.bot.user:
             return
 
-        if spoiler_regex.match(message.content):
+        if SPOILER_REGEX.match(message.content):
             print("Found a spoiler!!!", file=sys.stderr)
             if (datetime.now() - self.last_spoiler_message).seconds > 120:
                 self.last_spoiler_message = datetime.now()
@@ -33,6 +33,6 @@ class MessageCog(Cog):
         if message.author == self.bot.user:
             return
 
-        if message.author.id == CPT_FROGS_USER_ID and based_regex.match(message.content):
+        if message.author.id == CPT_FROGS_USER_ID and BASED_REGEX.match(message.content):
             print("Found a BASED", file=sys.stderr)
             await message.channel.send(f"Hey <@{CPT_FROGS_USER_ID}>, https://youtu.be/RUExiGNHF5s")

@@ -1,18 +1,8 @@
-from discord import Message, Intents
+from discord import Intents
 from discord.ext.commands import Bot
-from .constants import MACIUS_USER_ID, CPT_FROGS_USER_ID, DISCORD_KEY, TR_GUILD
-from re import compile, IGNORECASE
-from random import random
+from .constants import DISCORD_KEY
 import sys
 import os
-
-from .admin_commands import AdminCommands
-from .test_commands import TestCommands
-from .math_commands import MathCommands
-
-spoiler_regex = compile(r'\|\|(.+?)\|\|')
-based_regex = compile(r'based', IGNORECASE)
-
 
 class TR30Bot(Bot):
     _instance = None
