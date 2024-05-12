@@ -1,12 +1,10 @@
 from discord import Message, Intents
-from discord.ext.commands import Bot
 from .constants import MACIUS_USER_ID, CPT_FROGS_USER_ID, DISCORD_KEY, TR_GUILD
 from re import compile, IGNORECASE
 from random import random
 import sys
 
 from .admin_commands import AdminCommands
-from .ai_commands import AICommands
 from .test_commands import TestCommands
 from .math_commands import MathCommands
 
@@ -34,7 +32,6 @@ class TR30Bot(Bot):
         print(f'{self.user} has connected to Discord!', file=sys.stderr)
 
         await self.add_cog(AdminCommands(self))
-        await self.add_cog(AICommands(self))
         await self.add_cog(TestCommands(self))
         await self.add_cog(MathCommands(self))
 
