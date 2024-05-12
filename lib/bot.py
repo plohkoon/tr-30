@@ -1,8 +1,10 @@
 from discord import Message, Intents
+from discord.ext.commands import Bot
 from .constants import MACIUS_USER_ID, CPT_FROGS_USER_ID, DISCORD_KEY, TR_GUILD
 from re import compile, IGNORECASE
 from random import random
 import sys
+import os
 
 from .admin_commands import AdminCommands
 from .test_commands import TestCommands
@@ -31,24 +33,11 @@ class TR30Bot(Bot):
     async def on_ready(self) -> None:
         print(f'{self.user} has connected to Discord!', file=sys.stderr)
 
-        await self.add_cog(AdminCommands(self))
-        await self.add_cog(TestCommands(self))
-        await self.add_cog(MathCommands(self))
+        for file in os.listdir("./lib"):
+            if file.endswith("_cog.py"):
+                await self.load_extension(name=f"lib.{file[:-3]}")
 
-        # await self.tree.sync(guild=TR_GUILD)
-
-    async def on_message(self, message: Message) -> None:
-        if message.author == self.user:
-            return
-
-        if spoiler_regex.match(message.content):
-            print("Found a spoiler!!!", file=sys.stderr)
-            if random() < 0.5:
-                await message.channel.send(f"Hey <@{MACIUS_USER_ID}>, {message.author.nick} said something you might want to see!")
-
-        if message.author.id == CPT_FROGS_USER_ID and based_regex.match(message.content):
-            print("Found a BASED", file=sys.stderr)
-            await message.channel.send(f"Hey <@{CPT_FROGS_USER_ID}>, https://youtu.be/RUExiGNHF5s")
+        await self.tree.sync()
 
     def run(self) -> None:
         super().run(DISCORD_KEY)

@@ -16,7 +16,7 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-COPY chatbot.py test.py ./
+COPY chatbot.py chatbot.py
 COPY lib ./lib
 
 CMD ["python", "chatbot.py"]
