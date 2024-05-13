@@ -1,7 +1,10 @@
-from discord import Interaction, Message
-from datetime import datetime
 import sys
+from datetime import datetime
+
+from discord import Interaction, Message
+
 from .constants import LOG_LEVEL
+
 
 def debug(msg: str, interaction: Interaction = None, discord_msg: Message = None):
     if LOG_LEVEL in ["INFO", "WARNING", "ERROR"]:

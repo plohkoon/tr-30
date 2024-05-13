@@ -1,10 +1,11 @@
-from discord.ext.commands import Cog, Bot
-from discord import Message
-from .constants import MACIUS_USER_ID, CPT_FROGS_USER_ID
-from re import compile, IGNORECASE
-import sys
 from datetime import datetime
+from re import IGNORECASE, compile
+
+from discord import Message
+from discord.ext.commands import Bot, Cog
+
 from . import logging
+from .constants import CPT_FROGS_USER_ID, MACIUS_USER_ID
 
 SPOILER_REGEX = compile(r'\|\|(.+?)\|\|')
 BASED_REGEX = compile(r'based', IGNORECASE)

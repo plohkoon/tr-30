@@ -1,11 +1,11 @@
-from discord.ext.commands import Cog, Bot
-from discord import Interaction, File, Message
-from discord.app_commands import command, guilds
-from uuid import uuid4
+from re import DOTALL, IGNORECASE, MULTILINE, compile
 from subprocess import run
-from .constants import TR_GUILD, IABW_GUILD
-import sys
-from re import compile, MULTILINE, IGNORECASE, DOTALL
+from uuid import uuid4
+
+from discord import File, Interaction, Message
+from discord.app_commands import command
+from discord.ext.commands import Bot, Cog
+
 from . import logging
 
 LATEX_REGEX = compile(r"```Latex\n(.+?)\n```",

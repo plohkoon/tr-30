@@ -1,9 +1,11 @@
+import os
+
 from discord import Intents
 from discord.ext.commands import Bot
-from .constants import DISCORD_KEY
-import sys
-import os
+
 from . import logging
+from .constants import DISCORD_KEY
+
 
 class TR30Bot(Bot):
     _instance = None

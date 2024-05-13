@@ -1,9 +1,10 @@
-from discord.app_commands import command
 from discord import Interaction
-from discord.ext.commands import Cog, Bot
-from .constants import PLOHKOON_USER_ID
-import sys
+from discord.app_commands import command
+from discord.ext.commands import Bot, Cog
+
 from . import logging
+from .constants import PLOHKOON_USER_ID
+
 
 async def setup(bot: Bot):
     await bot.add_cog(AdminCog(bot))
