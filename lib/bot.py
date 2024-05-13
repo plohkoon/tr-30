@@ -3,6 +3,7 @@ from discord.ext.commands import Bot
 from .constants import DISCORD_KEY
 import sys
 import os
+from . import logging
 
 class TR30Bot(Bot):
     _instance = None
@@ -21,13 +22,16 @@ class TR30Bot(Bot):
         super().__init__("$", *args, intents=Intents.all(), **kwargs)
 
     async def on_ready(self) -> None:
-        print(f'{self.user} has connected to Discord!', file=sys.stderr)
+        logging.info(f'{self.user} has connected to Discord!')
 
         for file in os.listdir("./lib"):
             if file.endswith("_cog.py"):
+                logging.info(f"Loading {file[:-3]}")
+
                 await self.load_extension(name=f"lib.{file[:-3]}")
 
         await self.tree.sync()
 
     def run(self) -> None:
+        logging.info("Starting TR30...")
         super().run(DISCORD_KEY)
