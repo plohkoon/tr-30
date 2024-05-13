@@ -12,8 +12,8 @@ LATEX_REGEX = compile(r"```Latex\n(.+?)\n```",
                       flags=MULTILINE | IGNORECASE | DOTALL)
 MATH_MODE_REGEX = compile(r"\\\[(.*?)\\\]", flags=MULTILINE | DOTALL)
 
-def setup(bot: Bot):
-    bot.add_cog(MathCog(bot))
+async def setup(bot: Bot):
+    await bot.add_cog(MathCog(bot))
 
 class MathCog(Cog):
     def __init__(self, bot: Bot):
