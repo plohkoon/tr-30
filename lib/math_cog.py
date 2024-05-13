@@ -6,18 +6,23 @@ from subprocess import run
 from .constants import TR_GUILD, IABW_GUILD
 import sys
 from re import compile, MULTILINE, IGNORECASE, DOTALL
+from . import logging
 
 LATEX_REGEX = compile(r"```Latex\n(.+?)\n```",
                       flags=MULTILINE | IGNORECASE | DOTALL)
 MATH_MODE_REGEX = compile(r"\\\[(.*?)\\\]", flags=MULTILINE | DOTALL)
 
+def setup(bot: Bot):
+    bot.add_cog(MathCog(bot))
 
-class MathCommands(Cog):
+class MathCog(Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
 
     def write_file(self, content) -> str:
         file_name = str(uuid4())
+
+        logging.debug(f"Writing latex to /tmp/{file_name}.tex")
 
         with open(f"/tmp/{file_name}.tex", "w") as f:
             f.write(
@@ -34,6 +39,8 @@ class MathCommands(Cog):
         infile = f"/tmp/{file_name}.tex"
         outfile = f"/tmp/{file_name}.pdf"
 
+        logging.debug(f"Converting {infile} to {outfile}")
+  
         # TODO deal with errors
         run(["pdflatex", "-interaction=nonstopmode",
             "-output-directory", "/tmp/", infile])
@@ -42,12 +49,13 @@ class MathCommands(Cog):
         infile = f"/tmp/{file_name}.pdf"
         outfile = f"/tmp/{file_name}.png"
 
+        logging.debug(f"Converting {infile} to {outfile}")
         # TODO deal with errors
         run(["convert", "-density", "300", infile,
             "-quality", "90", "+adjoin", "-resize", "150%", outfile])
 
     def make_png(self, expression: str) -> str:
-        print("Making png", file=sys.stderr)
+        logging.debug("Making png")
 
         expression = MATH_MODE_REGEX.sub(r"$$\1$$", expression)
 
@@ -58,17 +66,20 @@ class MathCommands(Cog):
         return f"/tmp/{file_name}.png"
 
     @command(name="mathify", description="Renders a LaTeX expression")
-    @guilds(TR_GUILD, IABW_GUILD)
     async def mathify(self, interaction: Interaction, expression: str) -> None:
+        logging.info("Got command to render LaTeX expression", interaction)
         file_name = self.make_png(expression)
 
         await interaction.response.send_message(file=File(file_name))
 
-    @Cog.listener()
-    async def on_message(self, message: Message) -> None:
+    @Cog.listener("on_message")
+    async def latex_codeblock(self, message: Message) -> None:
+        if message.author == self.bot.user:
+            return
+
         match = LATEX_REGEX.match(message.content)
 
         if match:
-            print("Found a LaTeX code block", file=sys.stderr)
+            logging.info("Found a LaTeX code block", message)
             file_name = self.make_png(match.group(1))
             await message.channel.send(file=File(file_name))
