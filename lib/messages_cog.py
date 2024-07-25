@@ -9,7 +9,7 @@ from .constants import CPT_FROGS_USER_ID, MACIUS_USER_ID, PLOHKOON_USER_ID
 
 SPOILER_REGEX = compile(r'\|\|(.+?)\|\|')
 BASED_REGEX = compile(r'.*based.*', IGNORECASE)
-DEBOUNCE_TIME = 1
+DEBOUNCE_TIME = 120
 
 
 async def setup(bot: Bot):
