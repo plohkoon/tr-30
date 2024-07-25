@@ -9,6 +9,7 @@ from .constants import PLOHKOON_USER_ID
 async def setup(bot: Bot):
     await bot.add_cog(AdminCog(bot))
 
+
 class AdminCog(Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
@@ -18,13 +19,13 @@ class AdminCog(Cog):
         logging.warning("Someone attempted to sync the bot", interaction)
 
         if await self.guard(interaction):
-          await self.bot.tree.sync(guild=interaction.guild)
+            await self.bot.tree.sync(guild=interaction.guild)
 
-          logging.info(f"Command tree synced to {interaction.guild.name}", interaction)
+            logging.info(f"Command tree synced to {interaction.guild.name}", interaction)
 
-          await interaction.followup.send("Command tree synced", ephemeral=True)
+            await interaction.followup.send("Command tree synced", ephemeral=True)
 
-    async def guard(self, interaction: Interaction) -> None:
+    async def guard(self, interaction: Interaction) -> bool:
         if interaction.user.id != PLOHKOON_USER_ID:
             await interaction.response.send_message("Piss off, you're not my dad", ephemeral=True)
             return False

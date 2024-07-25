@@ -12,11 +12,13 @@ def debug(msg: str, interaction: Interaction = None, discord_msg: Message = None
 
     log(msg, "debug", interaction, discord_msg)
 
+
 def info(msg: str, interaction: Interaction = None, discord_msg: Message = None):
     if LOG_LEVEL in ["WARNING", "ERROR"]:
         return
 
     log(msg, "info", interaction, discord_msg)
+
 
 def warning(msg: str, interaction: Interaction = None, discord_msg: Message = None):
     if LOG_LEVEL in ["ERROR"]:
@@ -24,8 +26,10 @@ def warning(msg: str, interaction: Interaction = None, discord_msg: Message = No
 
     log(msg, "warning", interaction, discord_msg)
 
+
 def error(msg: str, interaction: Interaction = None, discord_msg: Message = None):
     log(msg, "error", interaction, discord_msg)
+
 
 def log(msg: str, level: str = "info", interaction: Interaction = None, discord_msg: Message = None):
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}]", end=" ", file=sys.stderr)

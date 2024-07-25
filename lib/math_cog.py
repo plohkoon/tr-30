@@ -12,8 +12,10 @@ LATEX_REGEX = compile(r"```Latex\n(.+?)\n```",
                       flags=MULTILINE | IGNORECASE | DOTALL)
 MATH_MODE_REGEX = compile(r"\\\[(.*?)\\\]", flags=MULTILINE | DOTALL)
 
+
 async def setup(bot: Bot):
     await bot.add_cog(MathCog(bot))
+
 
 class MathCog(Cog):
     def __init__(self, bot: Bot):
@@ -40,10 +42,10 @@ class MathCog(Cog):
         outfile = f"/tmp/{file_name}.pdf"
 
         logging.debug(f"Converting {infile} to {outfile}")
-  
+
         # TODO deal with errors
         run(["pdflatex", "-interaction=nonstopmode",
-            "-output-directory", "/tmp/", infile])
+             "-output-directory", "/tmp/", infile])
 
     def pdf_to_png(self, file_name) -> None:
         infile = f"/tmp/{file_name}.pdf"
@@ -52,7 +54,7 @@ class MathCog(Cog):
         logging.debug(f"Converting {infile} to {outfile}")
         # TODO deal with errors
         run(["convert", "-density", "300", infile,
-            "-quality", "90", "+adjoin", "-resize", "150%", outfile])
+             "-quality", "90", "+adjoin", "-resize", "150%", outfile])
 
     def make_png(self, expression: str) -> str:
         logging.debug("Making png")
