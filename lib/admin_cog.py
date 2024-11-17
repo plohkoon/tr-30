@@ -5,6 +5,8 @@ from discord.ext.commands import Bot, Cog
 from . import logging
 from .constants import PLOHKOON_USER_ID
 
+from datetime import datetime
+
 
 async def setup(bot: Bot):
     await bot.add_cog(AdminCog(bot))
@@ -30,5 +32,5 @@ class AdminCog(Cog):
             await interaction.response.send_message("Piss off, you're not my dad", ephemeral=True)
             return False
 
-        await interaction.response.defer(ephemeral=True)
+        await interaction.response.defer(ephemeral=True, thinking=True)
         return True
