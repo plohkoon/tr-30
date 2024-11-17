@@ -53,8 +53,7 @@ class MathCog(Cog):
 
         logging.debug(f"Converting {infile} to {outfile}")
         # TODO deal with errors
-        run(["convert", "-density", "300", infile,
-             "-quality", "90", "+adjoin", "-resize", "150%", outfile])
+        run(["convert", "-density", "300", infile, "-quality", "90", "+adjoin", "-resize", "150%", outfile])
 
     def make_png(self, expression: str) -> str:
         logging.debug("Making png")
@@ -82,6 +81,6 @@ class MathCog(Cog):
         match = LATEX_REGEX.match(message.content)
 
         if match:
-            logging.info("Found a LaTeX code block", message)
+            logging.info("Found a LaTeX code block", None, message)
             file_name = self.make_png(match.group(1))
             await message.channel.send(file=File(file_name))
