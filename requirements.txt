@@ -3,3 +3,4 @@ discord.py==2.1.0
 python-dotenv==0.21.0
 pnglatex==1.1
 faker==15.3.4
+aiofiles==24.1.0

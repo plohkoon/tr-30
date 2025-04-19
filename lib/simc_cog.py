@@ -2,8 +2,10 @@ from discord import Interaction, Message
 from discord.app_commands import Group
 from discord.ext.commands import Bot, Cog
 import asyncio
+import aiofiles
 from typing import Union
-
+from subprocess import run
+from uuid import uuid4
 from re import DOTALL, IGNORECASE, MULTILINE, compile
 
 SIMC_REGEX = compile(
@@ -71,27 +73,64 @@ class SimcCog(Cog):
     async def _fetch_character(self, character: str, server: str) -> None:
         await asyncio.sleep(2)
 
-    async def _simulate_character(self, character: str) -> None:
-        await asyncio.sleep(2)
+    async def _simulate_character(self, character: str) -> str:
+        file_name = str(uuid4())
 
-    async def _response(self, object: Union[Interaction, Message]) -> None:
+        simc_file_path = f"/tmp/{file_name}.simc"
+        json_file_path = f"/tmp/{file_name}.json"
+
+        logging.debug(f"Writing simc to {simc_file_path}")
+        async with aiofiles.open(simc_file_path, "w") as f:
+            await f.write(character)
+            await f.write("\n")
+
+        logging.debug(f"Running simc on {simc_file_path}")
+
+        proc = await asyncio.create_subprocess_exec(
+            "/bin/simc", simc_file_path, f"json2={json_file_path}",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        stdout, stderr = await proc.communicate()
+
+        if stderr:
+            logging.error(f"SimC stderr: {stderr.decode()}")
+        if stdout:
+            logging.debug(f"SimC stdout: {stdout.decode()}")
+
+        logging.debug(f"Simc finished, reading {json_file_path}")
+
+        try:
+            async with aiofiles.open(json_file_path, "r") as f:
+                data = await f.read()
+                logging.debug(f"Simc data: {data}")
+                return data
+        except FileNotFoundError:
+            logging.error(f"{json_file_path} not found")
+            return "Simulation failed: output file not found"
+
+
+    async def _response(self, object: Union[Interaction, Message], json: str) -> None:
+        json = json[0:1500]
         if isinstance(object, Interaction):
-            await object.followup.send("Simulation complete")
+            await object.followup.send(json)
         elif isinstance(object, Message):
-            await object.channel.send("Simulation complete")
+            await object.channel.send(json)
 
     async def process(self, queue):
         while True:
             type, data, object = await queue.get()
             logging.info("Processing a simc request")
 
+            json = ""
+
             async with object.channel.typing():
                 if type == "char":
                     await self._fetch_character(*data)
                     await self._simulate_character(data[0])
                 elif type == "raw":
-                    await self._simulate_character(data)
+                    json = await self._simulate_character(data)
 
             logging.info("Done processing simc request, responding")
 
-            await self._response(object)
+            await self._response(object, json)
